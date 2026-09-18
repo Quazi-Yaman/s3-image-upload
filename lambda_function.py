@@ -9,6 +9,7 @@ BUCKET_NAME = "yaman-image-upload-2026"
 
 
 def lambda_handler(event, context):
+    print("Lambda code updated from GitHub!")
 
     try:
         body = event.get("body", "")
