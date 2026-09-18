@@ -1,4 +1,4 @@
-name: Deploy Website to S3
+name: Deploy Website and Lambda
 
 on:
   push:
@@ -23,8 +23,19 @@ jobs:
           role-to-assume: arn:aws:iam::220664822853:role/GitHubActions-S3-Deploy
           aws-region: ap-south-1
 
-      - name: Upload website to S3
+      - name: Deploy website to S3
         run: |
           aws s3 sync . s3://yaman-s3-image-website --delete \
             --exclude ".git/*" \
-            --exclude ".github/*"
+            --exclude ".github/*" \
+            --exclude "lambda_function.py"
+
+      - name: Package Lambda
+        run: |
+          zip lambda.zip lambda_function.py
+
+      - name: Deploy Lambda
+        run: |
+          aws lambda update-function-code \
+            --function-name image-upload \
+            --zip-file fileb://lambda.zip
